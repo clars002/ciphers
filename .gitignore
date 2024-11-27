@@ -163,3 +163,7 @@ cython_debug/
 
 # Todo list
 todo.txt
+
+# Program output
+*_decrypted*
+*_encrypted*

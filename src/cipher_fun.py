@@ -31,6 +31,11 @@ def process_args():
     parser.add_argument(
         "--offset", type=int, default=8, help="Offset to shift for Caesar cipher."
     )
+    parser.add_argument(
+        "--alphabetic",
+        action='store_true',
+        help="Enables shifting with respect to the 26-character alphabet instead of 128-character ASCII set."
+    )
 
     return parser.parse_args()
 
@@ -64,12 +69,15 @@ def score_candidate(text: str):
     score = 0
 
     for l in range(2, 45):
-        for left_border in range(text_length):
+        for left_border in range(text_length - l):
             right_border = left_border + l
 
             window_size = right_border - left_border
 
             substring = text[left_border:right_border]
+
+            substring = substring.lower()
+
             substring_length = len(substring)
 
             if substring in word_set:
@@ -113,9 +121,6 @@ def decrypt_caesar(ciphertext: str, offset: int = 0):
                 plaintext += new_letter
 
             score = score_candidate(plaintext)
-
-            if i == 12:
-                print(plaintext)
 
             if score > best_score:
                 best_score = score
