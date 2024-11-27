@@ -44,23 +44,26 @@ def process_args():
 
 def main():
     args = process_args()
-
     my_cipher = cipher.CaesarCipher(args.alphabetic)
 
     input_path = args.input
     base_filename = os.path.splitext(os.path.basename(input_path))[0]
 
     if args.mode == "encrypt":
-        output_name = base_filename + "_encrypted.txt"
+        output_name = base_filename + "_encrypted"
+
+        if args.alphabetic:
+            output_name += "_alpha"
+
+        output_name += ".txt"
 
         with open(args.input) as file:
-            plaintext = file.read()
-
-            ciphertext = my_cipher.encrypt(plaintext, args.key)
+            text_in = file.read()
+            text_out = my_cipher.encrypt(text_in, args.key)
 
         output_file = open(f"ciphertext/{output_name}", "w")
 
-        output_file.write(ciphertext)
+        output_file.write(text_out)
 
         output_file.close()
 
@@ -68,13 +71,12 @@ def main():
         output_name = base_filename + "_decrypted.txt"
 
         with open(args.input) as file:
-            ciphertext = file.read()
-
-            plaintext = my_cipher.decrypt(ciphertext, args.key)
+            text_in = file.read()
+            text_out = my_cipher.decrypt(text_in, args.key)
 
         output_file = open(f"plaintext/{output_name}", "w")
 
-        output_file.write(plaintext)
+        output_file.write(text_out)
 
         output_file.close()
 
