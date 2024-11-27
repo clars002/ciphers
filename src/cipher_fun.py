@@ -46,39 +46,17 @@ def main():
     args = process_args()
     my_cipher = cipher.CaesarCipher(args.alphabetic)
 
-    input_path = args.input
-    base_filename = os.path.splitext(os.path.basename(input_path))[0]
+    base_filename = os.path.splitext(os.path.basename(args.input))[0]
+    output_directory = "ciphertext/" if args.mode == "encrypt" else "plaintext/"
+    mode_suffix = "_encrypted" if args.mode == "encrypt" else "_decrypted"
+    alpha_suffix = "_alpha" if args.alphabetic else ""
+    output_path = f"{output_directory}{base_filename}{mode_suffix}{alpha_suffix}.txt"
 
-    if args.mode == "encrypt":
-        output_name = base_filename + "_encrypted"
-
-        if args.alphabetic:
-            output_name += "_alpha"
-
-        output_name += ".txt"
-
-        with open(args.input) as file:
-            text_in = file.read()
-            text_out = my_cipher.encrypt(text_in, args.key)
-
-        output_file = open(f"ciphertext/{output_name}", "w")
-
+    process_text = my_cipher.encrypt if args.mode == "encrypt" else my_cipher.decrypt
+    with open(args.input, "r") as input_file, open(output_path, "w") as output_file:
+        text_in = input_file.read()
+        text_out = process_text(text_in, args.key)
         output_file.write(text_out)
-
-        output_file.close()
-
-    elif args.mode == "decrypt":
-        output_name = base_filename + "_decrypted.txt"
-
-        with open(args.input) as file:
-            text_in = file.read()
-            text_out = my_cipher.decrypt(text_in, args.key)
-
-        output_file = open(f"plaintext/{output_name}", "w")
-
-        output_file.write(text_out)
-
-        output_file.close()
 
 
 if __name__ == "__main__":
