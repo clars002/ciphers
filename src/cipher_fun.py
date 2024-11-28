@@ -1,3 +1,7 @@
+"""
+The main file; contains primary driving logic.
+"""
+
 import argparse
 import os
 import time
@@ -52,6 +56,18 @@ def process_args():
 
 
 def generate_output_path(input_path: str, mode: str, alphabetic: bool):
+    """
+    Generates a string representing the (default) file path to write results to.
+
+    Args:
+        input_path (str): See the --input flag in process_args; reflected in the filename.
+        mode (str): See the --mode flag in process_args; reflected in the filename.
+        alphabetic (bool): See the --alphabetic flag in process_args; reflected in the filename.
+
+    Returns:
+        str: A string representing the file path constructed from the arguments.
+    """
+
     base_filename = os.path.splitext(os.path.basename(input_path))[0]
 
     if mode == "encrypt":
@@ -77,15 +93,36 @@ def generate_output_path(input_path: str, mode: str, alphabetic: bool):
 
 
 def print_summary(header: str, text_out: str, output_path: str, start_time: float):
+    """
+    Prints a summary of the program's results.
+
+    Args:
+        header (str): The header, printed on the first line.
+        text_out (str): The main text output, intended to display final ciphertext/plaintext.
+        output_path (str): The file path to which results have (already) been written.
+        start_time (float): The start time of the program, used to calculate runtime.
+    """
+
     print(header)
     print(f"-----------------------------------------------------------------------")
     print(util.preview_text(text_out))
     print(f"\n")
     print(f"Wrote results to: {output_path}")
     print(f"Total runtime: {time.time() - start_time:.3f} seconds.")
+    return
 
 
 def validate_input(args: argparse.Namespace) -> bool:
+    """
+    Validates the arguments passed to the program.
+
+    Args:
+        args (argparse.Namespace): The arguments passed to the program.
+
+    Returns:
+        bool: True if the arguments are valid, else False
+    """
+
     if args.key == 0:
         if args.mode == "encrypt":
             print("In order to encrypt, please provide a key using the --key argument.")
@@ -111,6 +148,10 @@ def validate_input(args: argparse.Namespace) -> bool:
 
 
 def main():
+    """
+    The main driver; processes arguments, executes the chosen operation, and displays results.
+    """
+
     start_time = time.time()
     args = process_args()
 
@@ -119,7 +160,7 @@ def main():
 
     my_cipher = cipher.CaesarCipher(args.alphabetic)
 
-    if not args.output:
+    if not args.output:  # Check if an output path was supplied; if not, use the default
         output_path = generate_output_path(args.input, args.mode, args.alphabetic)
     else:
         output_path = args.output
