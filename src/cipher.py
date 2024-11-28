@@ -13,37 +13,34 @@ class CaesarCipher(Cipher):
     def encrypt(self, plaintext: str, key: int):
         ciphertext = ""
 
-        offset = key
-
         for char in plaintext:
-            if self.alphabetic and not char.isalpha():
-                ciphertext += char
-                continue
+            if self.alphabetic:
+                key %= 26
 
-            if not self.alphabetic:
-                initial_index = ord(char)
-                shifted_index = initial_index + offset
+                if not char.isalpha():
+                    ciphertext += char
+                    continue
 
-                new_letter = chr(shifted_index)
-
-                ciphertext += new_letter
-            else:
-                upper = False
-
-                if char.isupper():
-                    upper = True
+                is_upper = char.isupper()
+                if is_upper:
                     char = char.lower()
 
                 alpha_index = ord(char) - ord("a")
 
-                shifted_alpha_index = (alpha_index + offset) % 26
+                shifted_alpha_index = (alpha_index + key) % 26
 
                 new_letter = chr(shifted_alpha_index + ord("a"))
 
-                if upper:
+                if is_upper:
                     new_letter = new_letter.upper()
 
-                ciphertext += new_letter
+            else:
+                key %= 128
+
+                shifted_index = ord(char) + key
+                new_letter = chr(shifted_index)
+
+            ciphertext += new_letter
 
         return ciphertext
 
