@@ -1,17 +1,18 @@
 from typing import Set
 
+import utilities as util
 from cipher import Cipher
 
 
 def bruteforce_attack(ciphertext: str, cipher: Cipher, max_key: int):
-    text_length = len(ciphertext)
-
-    long_text = text_length > 1024
+    long_text = len(ciphertext) > 1024
 
     if long_text:
         front_text = ciphertext[:1024]
         remaining_text = ciphertext[1024:]
-        ciphertext = front_text
+        base_text = front_text
+    else:
+        base_text = ciphertext
 
     best_candidate = None
     best_score = -1
@@ -21,7 +22,7 @@ def bruteforce_attack(ciphertext: str, cipher: Cipher, max_key: int):
         word_set = {line.strip() for line in word_list.readlines()}
 
     for i in range(max_key):
-        plaintext = cipher.decrypt(ciphertext, i)
+        plaintext = cipher.decrypt(base_text, i)
         score = _score_candidate(plaintext, word_set)
 
         if score > best_score:
@@ -29,12 +30,12 @@ def bruteforce_attack(ciphertext: str, cipher: Cipher, max_key: int):
             best_candidate = plaintext
             best_key = i
 
-            _print_update(plaintext, text_length, i, max_key, best_score)
-    
+            _print_update(plaintext, ciphertext, i, max_key, best_score)
+
     if long_text:
         best_candidate += cipher.decrypt(remaining_text, best_key)
 
-    return best_candidate
+    return best_candidate, best_key
 
 
 def _score_candidate(text: str, words: Set[str]) -> int:
@@ -52,9 +53,16 @@ def _score_candidate(text: str, words: Set[str]) -> int:
     return score
 
 
-def _print_update(plaintext, text_length, i, max_key, best_score):
-    text_preview = f"\"{plaintext[:512]}...\"" if text_length > 512 else f"\"{plaintext}\""
-    print(
-        f'Processed {i + 1}/{max_key} candidates thus far; best candidate:\n{text_preview}\nWith score: {best_score}.'
-    )
+def _print_update(plaintext, ciphertext, i, max_key, best_score):
+    util.clear_screen()
+    plaintext_preview = util.preview_text(plaintext)
+    ciphertext_preview = util.preview_text(ciphertext)
+    print(f"Brute force attack in progress...\n")
+    print(f"Ciphertext:")
+    print(f"--------------------------------------------------------------")
+    print(ciphertext_preview)
+    print(f"\n")
+    print(f"Best plaintext candidate so far:")
+    print(f"--------------------------------------------------------------")
+    print(plaintext_preview)
     return

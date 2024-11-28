@@ -1,8 +1,10 @@
 import argparse
 import os
+import time
 
 import attacks as atk
 import cipher
+import utilities as util
 
 
 def process_args():
@@ -66,7 +68,17 @@ def generate_output_path(input_path: str, mode: str, alphabetic: bool):
     return output_path
 
 
+def print_summary(header: str, text_out: str, output_path: str, start_time: float):
+    print(header)
+    print(f"-----------------------------------------------------------------------")
+    print(util.preview_text(text_out))
+    print(f"\n")
+    print(f"Wrote results to: {output_path}")
+    print(f"Total runtime: {time.time() - start_time:.3f} seconds.")
+
+
 def main():
+    start_time = time.time()
     args = process_args()
     my_cipher = cipher.CaesarCipher(args.alphabetic)
 
@@ -76,14 +88,23 @@ def main():
         text_in = input_file.read()
 
         if args.mode == "encrypt":
+            print(f"Encrypting file at {args.input} with key {args.key}...")
             text_out = my_cipher.encrypt(text_in, args.key)
+            summary_header = f"Encryption finished! Ciphertext:"
+
         elif args.mode == "decrypt":
+            print(f"Decrypting file at {args.input} with key {args.key}...")
             text_out = my_cipher.decrypt(text_in, args.key)
+            summary_header = f"Decryption finished! Plaintext:"
+
         elif args.mode == "crack":
             max_key = 26 if args.alphabetic else 128
-            text_out = atk.bruteforce_attack(text_in, my_cipher, max_key)
+            text_out, cracked_key = atk.bruteforce_attack(text_in, my_cipher, max_key)
+            summary_header = f"Brute force crack finished! The key is most likely {cracked_key} with plaintext:"
+            util.clear_screen()
 
         output_file.write(text_out)
+        print_summary(summary_header, text_out, output_path, start_time)
 
 
 if __name__ == "__main__":
