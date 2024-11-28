@@ -20,7 +20,6 @@ def process_args():
         A Namespace object where attributes correspond to the
         defined/provided args.
     """
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -67,19 +66,15 @@ def generate_output_path(input_path: str, mode: str, alphabetic: bool):
     Returns:
         str: A string representing the file path constructed from the arguments.
     """
-
     base_filename = os.path.splitext(os.path.basename(input_path))[0]
 
     output_directory = "output"
 
     if mode == "encrypt":
-        output_subdir = "encrypted"
         mode_suffix = "_enc"
     elif mode == "decrypt":
-        output_subdir = "decrypted"
         mode_suffix = "_dec"
     elif mode == "crack":
-        output_subdir = "cracked"
         mode_suffix = "_crack"
 
     if alphabetic:
@@ -88,7 +83,8 @@ def generate_output_path(input_path: str, mode: str, alphabetic: bool):
         alpha_suffix = ""
 
     output_path = os.path.join(
-        output_directory, output_subdir, f"{base_filename}{mode_suffix}{alpha_suffix}.txt"
+        output_directory,
+        f"{base_filename}{mode_suffix}{alpha_suffix}.txt",
     )
 
     return output_path
@@ -104,7 +100,6 @@ def print_summary(header: str, text_out: str, output_path: str, start_time: floa
         output_path (str): The file path to which results have (already) been written.
         start_time (float): The start time of the program, used to calculate runtime.
     """
-
     print(header)
     print(f"-----------------------------------------------------------------------")
     print(util.preview_text(text_out))
@@ -124,7 +119,6 @@ def validate_input(args: argparse.Namespace) -> bool:
     Returns:
         bool: True if the arguments are valid, else False
     """
-
     if args.key == 0:
         if args.mode == "encrypt":
             print("In order to encrypt, please provide a key using the --key argument.")
@@ -153,7 +147,6 @@ def main():
     """
     The main driver; processes arguments, executes the chosen operation, and displays results.
     """
-
     start_time = time.time()
     args = process_args()
 
