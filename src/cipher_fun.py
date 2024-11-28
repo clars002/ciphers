@@ -70,15 +70,17 @@ def generate_output_path(input_path: str, mode: str, alphabetic: bool):
 
     base_filename = os.path.splitext(os.path.basename(input_path))[0]
 
+    output_directory = "output"
+
     if mode == "encrypt":
-        output_directory = "ciphertext"
-        mode_suffix = "_encrypted"
+        output_subdir = "encrypted"
+        mode_suffix = "_enc"
     elif mode == "decrypt":
-        output_directory = "plaintext"
-        mode_suffix = "_decrypted"
+        output_subdir = "decrypted"
+        mode_suffix = "_dec"
     elif mode == "crack":
-        output_directory = "cracked"
-        mode_suffix = "_cracked"
+        output_subdir = "cracked"
+        mode_suffix = "_crack"
 
     if alphabetic:
         alpha_suffix = "_alpha"
@@ -86,7 +88,7 @@ def generate_output_path(input_path: str, mode: str, alphabetic: bool):
         alpha_suffix = ""
 
     output_path = os.path.join(
-        output_directory, f"{base_filename}{mode_suffix}{alpha_suffix}.txt"
+        output_directory, output_subdir, f"{base_filename}{mode_suffix}{alpha_suffix}.txt"
     )
 
     return output_path

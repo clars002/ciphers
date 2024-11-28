@@ -1,8 +1,8 @@
 class Cipher:
-    def encrypt(plaintext: str):
+    def encrypt(plaintext: str) -> str:
         raise NotImplementedError
 
-    def decrypt(ciphertext: str):
+    def decrypt(ciphertext: str) -> str:
         raise NotImplementedError
 
 
@@ -15,7 +15,7 @@ class CaesarCipher(Cipher):
             else CaesarCipher._shift_char
         )
 
-    def encrypt(self, plaintext: str, key: int):
+    def encrypt(self, plaintext: str, key: int) -> str:
         ciphertext = ""
 
         for char in plaintext:
@@ -24,11 +24,11 @@ class CaesarCipher(Cipher):
 
         return ciphertext
 
-    def decrypt(self, ciphertext: str, key: int):
+    def decrypt(self, ciphertext: str, key: int) -> str:
         return self.encrypt(ciphertext, -key)
 
     @staticmethod
-    def _shift_char_alphabetic(char, key):
+    def _shift_char_alphabetic(char: str, key: int) -> str:
         if not char.isalpha():
             return char
 
@@ -42,7 +42,7 @@ class CaesarCipher(Cipher):
         return new_letter
 
     @staticmethod
-    def _shift_char(char, key):
+    def _shift_char(char: str, key: int) -> str:
         initial_index = ord(char)
         shifted_index = (initial_index + key) % 128
         new_letter = chr(shifted_index)
