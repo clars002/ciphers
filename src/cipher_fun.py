@@ -1,6 +1,7 @@
 import argparse
 import os
 
+import attacks as atk
 import cipher
 
 
@@ -42,20 +43,44 @@ def process_args():
     return parser.parse_args()
 
 
+def generate_output_path(input_path: str, mode: str):
+    base_filename = os.path.splitext(os.path.basename(input_path))[0]
+
+    if mode == "encrypt":
+        output_directory = "ciphertext/"
+        mode_suffix = "_encrypted"
+        alpha_suffix = "_alpha"
+    elif mode == "decrypt":
+        output_directory = "plaintext/"
+        mode_suffix = "_decrypted"
+        alpha_suffix = ""
+    elif mode == "crack":
+        output_directory = "cracked/"
+        mode_suffix = "_cracked"
+        alpha_suffix = ""
+
+    output_path = f"{output_directory}{base_filename}{mode_suffix}{alpha_suffix}.txt"
+
+    return output_path
+
+
 def main():
     args = process_args()
     my_cipher = cipher.CaesarCipher(args.alphabetic)
 
-    base_filename = os.path.splitext(os.path.basename(args.input))[0]
-    output_directory = "ciphertext/" if args.mode == "encrypt" else "plaintext/"
-    mode_suffix = "_encrypted" if args.mode == "encrypt" else "_decrypted"
-    alpha_suffix = "_alpha" if args.alphabetic else ""
-    output_path = f"{output_directory}{base_filename}{mode_suffix}{alpha_suffix}.txt"
+    output_path = generate_output_path(args.input, args.mode)
 
-    process_text = my_cipher.encrypt if args.mode == "encrypt" else my_cipher.decrypt
     with open(args.input, "r") as input_file, open(output_path, "w") as output_file:
         text_in = input_file.read()
-        text_out = process_text(text_in, args.key)
+
+        if args.mode == "encrypt":
+            text_out = my_cipher.encrypt(text_in, args.key)
+        elif args.mode == "decrypt":
+            text_out = my_cipher.decrypt(text_in, args.key)
+        elif args.mode == "crack":
+            max_key = 26 if args.alphabetic else 128
+            text_out = atk.bruteforce_attack(text_in, my_cipher, max_key)
+
         output_file.write(text_out)
 
 
