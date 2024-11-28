@@ -31,7 +31,7 @@ def process_args():
         help="Which cypher to use for encryption (unused in decryption mode).",
     )
     parser.add_argument(
-        "--key", type=int, default=8, help="Offset to shift for Caesar cipher."
+        "--key", type=int, default=0, help="Offset to shift for Caesar cipher."
     )
     parser.add_argument(
         "--alphabetic",
