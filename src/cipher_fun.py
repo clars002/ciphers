@@ -43,20 +43,22 @@ def process_args():
     return parser.parse_args()
 
 
-def generate_output_path(input_path: str, mode: str):
+def generate_output_path(input_path: str, mode: str, alphabetic: bool):
     base_filename = os.path.splitext(os.path.basename(input_path))[0]
 
     if mode == "encrypt":
         output_directory = "ciphertext/"
         mode_suffix = "_encrypted"
-        alpha_suffix = "_alpha"
     elif mode == "decrypt":
         output_directory = "plaintext/"
         mode_suffix = "_decrypted"
-        alpha_suffix = ""
     elif mode == "crack":
         output_directory = "cracked/"
         mode_suffix = "_cracked"
+
+    if alphabetic:
+        alpha_suffix = "_alpha"
+    else:
         alpha_suffix = ""
 
     output_path = f"{output_directory}{base_filename}{mode_suffix}{alpha_suffix}.txt"
@@ -68,7 +70,7 @@ def main():
     args = process_args()
     my_cipher = cipher.CaesarCipher(args.alphabetic)
 
-    output_path = generate_output_path(args.input, args.mode)
+    output_path = generate_output_path(args.input, args.mode, args.alphabetic)
 
     with open(args.input, "r") as input_file, open(output_path, "w") as output_file:
         text_in = input_file.read()
