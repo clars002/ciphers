@@ -1,3 +1,6 @@
+from typing import Set
+
+
 class Cipher:
     def encrypt(plaintext: str):
         raise NotImplementedError
@@ -9,16 +12,15 @@ class Cipher:
 class CaesarCipher(Cipher):
     def __init__(self, alphabetic: bool = False):
         self.alphabetic = alphabetic
+        self.shift_function = (
+            CaesarCipher._shift_char_alpha if alphabetic else CaesarCipher._shift_char
+        )
 
     def encrypt(self, plaintext: str, key: int):
         ciphertext = ""
 
         for char in plaintext:
-            if self.alphabetic:
-                new_letter = CaesarCipher._shift_char_alpha(char, key)
-            else:
-                new_letter = CaesarCipher._shift_char(char, key)
-
+            new_letter = self.shift_function(char, key)
             ciphertext += new_letter
 
         return ciphertext
@@ -36,14 +38,9 @@ class CaesarCipher(Cipher):
     def _reverse_caesar(self, ciphertext, key):
         plaintext = ""
 
-        if self.alphabetic:
-            for char in ciphertext:
-                new_letter = CaesarCipher._shift_char_alpha(char, -key)
-                plaintext += new_letter
-        else:
-            for char in ciphertext:
-                new_letter = CaesarCipher._shift_char(char, -key)
-                plaintext += new_letter
+        for char in ciphertext:
+            new_letter = self.shift_function(char, -key)
+            plaintext += new_letter
 
         return plaintext
 
@@ -51,20 +48,19 @@ class CaesarCipher(Cipher):
         best_candidate = None
         best_score = -1
 
+        with open("wordlist.txt", "r") as word_list:
+            word_set = {line.strip() for line in word_list.readlines()}
+
         limit = 26 if self.alphabetic else 128
 
         for i in range(limit):
             plaintext = ""
 
             for char in ciphertext:
-                if self.alphabetic:
-                    new_letter = CaesarCipher._shift_char_alpha(char, -i)
-                else:
-                    new_letter = CaesarCipher._shift_char(char, -i)
-
+                new_letter = self.shift_function(char, -i)
                 plaintext += new_letter
 
-            score = CaesarCipher._score_candidate(plaintext)
+            score = CaesarCipher._score_candidate(plaintext, word_set)
 
             if score > best_score:
                 best_score = score
@@ -97,12 +93,7 @@ class CaesarCipher(Cipher):
         return new_letter
 
     @staticmethod
-    def _score_candidate(text: str):
-        score = 0
-
-        with open("wordlist.txt", "r") as word_list:
-            word_set = {line.strip() for line in word_list.readlines()}
-
+    def _score_candidate(text: str, words: Set[str]) -> int:
         score = 0
 
         for l in range(2, 45):
@@ -115,7 +106,7 @@ class CaesarCipher(Cipher):
 
                 substring_length = len(substring)
 
-                if substring in word_set:
+                if substring in words:
                     score += substring_length**2
                     # print(f"Wordlist hit: {substring}.")
 
