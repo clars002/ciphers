@@ -32,7 +32,10 @@ def process_args():
         default=None,
     )
     parser.add_argument(
-        "--mode", type=str, default="encrypt", help="Whether to encrypt or decrypt."
+        "--mode",
+        type=str,
+        default="encrypt",
+        help="Whether to encrypt, decrypt, or crack.",
     )
     parser.add_argument(
         "--cipher",
