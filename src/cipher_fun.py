@@ -23,9 +23,7 @@ def process_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--input",
-        type=str,
-        help="Path to the input file.",
+        "--input", type=str, help="Path to the input file.", required=True
     )
     parser.add_argument(
         "--output",
@@ -43,7 +41,10 @@ def process_args():
         help="Which cypher to use for encryption (currently supports caesar).",
     )
     parser.add_argument(
-        "--key", type=int, default=0, help="Offset to shift for Caesar cipher."
+        "--key",
+        type=int,
+        default=0,
+        help="Key to use for encryption or decryption (e.g. the shift offset for Caesar).",
     )
     parser.add_argument(
         "--alphabetic",

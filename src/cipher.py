@@ -119,7 +119,7 @@ class CaesarCipher(Cipher):
         Returns:
             str: The resultant character after shifting.
         """
-        if not 32 <= ord(char) <= 126: # Only operate on printable ASCII characters
+        if not 32 <= ord(char) <= 126:  # Only operate on printable ASCII characters
             return char
 
         initial_index = ord(char) - 32
