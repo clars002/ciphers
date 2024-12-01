@@ -119,7 +119,19 @@ class CaesarCipher(Cipher):
         Returns:
             str: The resultant character after shifting.
         """
-        initial_index = ord(char)
-        shifted_index = (initial_index + key) % 128
-        new_letter = chr(shifted_index)
+        if not 32 <= ord(char) <= 126: # Only operate on printable ASCII characters
+            return char
+
+        initial_index = ord(char) - 32
+        shifted_index = (initial_index + key) % 95
+        new_letter = chr(shifted_index + 32)
         return new_letter
+
+
+class CipherFactory:
+    @staticmethod
+    def create_cipher(cipher: str = "caesar", alphabetic: str = False):
+        if cipher.lower() == "caesar":
+            return CaesarCipher(alphabetic)
+        else:
+            raise ValueError(f"Unknown algorithm: {algorithm}")

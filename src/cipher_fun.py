@@ -37,10 +37,10 @@ def process_args():
         "--mode", type=str, default="encrypt", help="Whether to encrypt or decrypt."
     )
     parser.add_argument(
-        "--encryption_cipher",
+        "--cipher",
         type=str,
-        default="Caesar",
-        help="Which cypher to use for encryption (unused in decryption mode).",
+        default="caesar",
+        help="Which cypher to use for encryption (currently supports caesar).",
     )
     parser.add_argument(
         "--key", type=int, default=0, help="Offset to shift for Caesar cipher."
@@ -153,7 +153,7 @@ def main():
     if not validate_input(args):
         return
 
-    my_cipher = cipher.CaesarCipher(args.alphabetic)
+    my_cipher = cipher.CipherFactory.create_cipher(args.cipher, args.alphabetic)
 
     if not args.output:  # Check if an output path was supplied; if not, use the default
         output_path = generate_output_path(args.input, args.mode, args.alphabetic)
