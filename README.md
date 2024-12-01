@@ -43,6 +43,9 @@ Several sample plaintexts and ciphertexts are provided in the sample_text/plaint
 The ciphertext directory contains another alphabetic/ subdirectory, containing ciphertexts encrypted in alphabetic mode (the base ciphertext/ directory contains texts encrypted with respect to ASCII).
 
 All sample ciphertexts' filenames have been marked with the keys used to encrypt them.
+  
+If an output path is not supplied by the user via the --output argument, all output will go to the output/ directory.
+Some sample output is provided in the output/sample subdirectory, with suffixes indicating which operations were performed on each respective source file.
 
 ### Sidenotes
 Be mindful of the --alphabetic option. It is essential to decrypt and/or crack files in the same mode they were encrypted in.
