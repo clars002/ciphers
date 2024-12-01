@@ -51,6 +51,19 @@ Consistency is key.
 
 Occasionally, the brute force crack will select a somewhat garbled candidate over the genuine original plaintext. This is a quirk inherent to the scoring system I've implemented that arises only with certain text input. I spent substantial time and effort trying to iron this out, but in the end I couldn't think of anything that didn't involve moving to an entirely different and much more complicated scoring system, which I unfortunately don't have time for. However, the issue is relatively minor, since the resulting output is still quite readable and reflects the target plaintext closely.
 
+## Discussion
+As alluded to in the overview, I had originally intended to implement more ciphers and attack methods, but ultimately had to narrow the scope for this submission.
+I tried to keep the code open to expansion in the future for the purposes of adding more ciphers and attacks later.
+One example of this is my use of the factory design pattern. From main, the code calls cipher.CipherFactory.create_cipher(); this function, in turn, takes a string indicating which cipher is to be used and returns an appropriate object of type Cipher (the abstract base class on which CaesarCipher is built).
+Furthermore, the brute force attack implementation I wrote attempts to be cipher-agnostic; it can operate on any Cipher object. Of course, for complex ciphers, it will inevitably become infeasible as an attack method.  
+  
+This brute force attack implementation proved an interesting challenge. Initially, I had trouble keeping it performant, especially for longer ciphertexts. One simple but effective optimization I employed is to only process the first 1024 characters of the text when scoring candidate keys. Once the best key is thus found, it is subsequently applied to the full text.
+I am sure a more sophisticated implementation is possible, but I feel satisfied with the simplicity and performance of my current version.
+
+I hope my effort on this project is evident in the simplicity of the code. It took a lot of effort to make it so short and sweet!
+
+Thank you for your time and interest :)
+
 ## Credits
 Wordlist used for brute force decryption taken from: https://websites.umich.edu/~jlawler/wordlist  
 Crime and Punishment txt file from: https://www.gutenberg.org/ebooks/2554
